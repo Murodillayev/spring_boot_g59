@@ -1,14 +1,14 @@
 package uz.pdp.todo;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import uz.pdp.todo.dto.TodoCreateDto;
+import uz.pdp.todo.dto.TodoDto;
+import uz.pdp.todo.dto.TodoUpdateDto;
 
-@Controller
+import java.util.List;
+
 @RequestMapping("/todo")
+@RestController
 public class TodoController {
     private final TodoService service;
 
@@ -16,14 +16,34 @@ public class TodoController {
         this.service = service;
     }
 
-    @GetMapping("/create")
-    public String createPage() {
-        return "todo/create";
+    @PostMapping
+    public TodoDto create(@RequestBody TodoCreateDto dto) {
+        return service.create(dto);
     }
 
-    @PostMapping("/create")
-    public String create(@ModelAttribute TodoCreateDto dto) {
-        service.create(dto);
-        return "todo/list";
+    @GetMapping
+    public List<TodoDto> getAll() {
+        return service.getAll();
     }
+
+    @GetMapping("/{id}")
+    public TodoDto get(@PathVariable String id) {
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable String id) {
+
+        return "Sucessfully deleted!";
+    }
+
+
+    @PutMapping("/{id}")
+    @ResponseBody
+    public TodoDto update(@PathVariable String id, @RequestBody TodoUpdateDto dto) {
+        return service.update(id, dto);
+    }
+
+
 }
+

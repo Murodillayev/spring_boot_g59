@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -30,15 +31,14 @@ public class TodoRepository {
                     """, todo.getId(), todo.getTitle(), todo.getDescription());
         }
 
-        return byId.get();
+        return findById(todo.getId()).get();
     }
 
     private Optional<Todo> findById(String id) {
         String sql = """
                 select a.*
                 from todo a
-                where not a.id
-                  and a.id = ?""";
+                where a.id = ?""";
 
         try {
             Todo todo = jdbcTemplate.queryForObject(sql, getRowMapper(), id);
@@ -58,5 +58,12 @@ public class TodoRepository {
             author.setCompleted(rs.getBoolean("completed"));
             return author;
         };
+    }
+
+    public List<Todo> findAll() {
+        String sql = """
+                        select * from todo where not deleted order by created_at desc
+                """;
+        return jdbcTemplate.query(sql, getRowMapper());
     }
 }
