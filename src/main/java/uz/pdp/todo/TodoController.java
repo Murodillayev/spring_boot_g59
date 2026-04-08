@@ -1,6 +1,7 @@
 package uz.pdp.todo;
 
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.ObjectMapper;
 import uz.pdp.todo.dto.TodoCreateDto;
 import uz.pdp.todo.dto.TodoDto;
 import uz.pdp.todo.dto.TodoUpdateDto;
@@ -10,9 +11,12 @@ import java.util.List;
 @RequestMapping("/todo")
 @RestController
 public class TodoController {
+
+    private final ObjectMapper objectMapper;
     private final TodoService service;
 
-    public TodoController(TodoService service) {
+    public TodoController(ObjectMapper objectMapper, TodoService service) {
+        this.objectMapper = objectMapper;
         this.service = service;
     }
 
