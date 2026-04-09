@@ -1,8 +1,9 @@
-package uz.pdp.todo;
+package uz.pdp.todo.respository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import uz.pdp.todo.model.domain.Todo;
 
 import java.time.LocalDateTime;
 import java.util.List;

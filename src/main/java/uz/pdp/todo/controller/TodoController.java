@@ -1,10 +1,11 @@
-package uz.pdp.todo;
+package uz.pdp.todo.controller;
 
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.ObjectMapper;
-import uz.pdp.todo.dto.TodoCreateDto;
-import uz.pdp.todo.dto.TodoDto;
-import uz.pdp.todo.dto.TodoUpdateDto;
+import uz.pdp.todo.service.TodoService;
+import uz.pdp.todo.model.dto.TodoCreateDto;
+import uz.pdp.todo.model.dto.TodoDto;
+import uz.pdp.todo.model.dto.TodoUpdateDto;
 
 import java.util.List;
 

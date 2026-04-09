@@ -1,11 +1,10 @@
 package uz.pdp.todo.mapper;
 
 import org.springframework.stereotype.Component;
-import uz.pdp.todo.Todo;
-import uz.pdp.todo.dto.TodoCreateDto;
-import uz.pdp.todo.dto.TodoDto;
+import uz.pdp.todo.model.domain.Todo;
+import uz.pdp.todo.model.dto.TodoCreateDto;
+import uz.pdp.todo.model.dto.TodoDto;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component

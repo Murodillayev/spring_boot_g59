@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import tools.jackson.databind.ObjectMapper;
-import uz.pdp.todo.TodoService;
 
 import javax.sql.DataSource;
 

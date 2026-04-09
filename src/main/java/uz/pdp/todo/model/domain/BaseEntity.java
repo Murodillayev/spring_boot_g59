@@ -1,5 +1,4 @@
-package uz.pdp.todo;
-
+package uz.pdp.todo.model.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,13 +7,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class Todo {
+public class BaseEntity {
     private String id;
-    private String title;
-    private String description;
-    private boolean completed;
-    private boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    private LocalDateTime deletedAt;
+    private String createdBy;
+    private String updatedBy;
+    private boolean deleted;
 }

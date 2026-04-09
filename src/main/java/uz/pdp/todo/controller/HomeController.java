@@ -1,4 +1,4 @@
-package uz.pdp.todo;
+package uz.pdp.todo.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
