@@ -1,15 +1,19 @@
 package uz.pdp.todo.service;
 
+import org.springframework.stereotype.Service;
 import uz.pdp.todo.criteria.BaseCriteria;
 import uz.pdp.todo.mapper.AuthUserMapper;
+import uz.pdp.todo.model.domain.AuthUser;
 import uz.pdp.todo.model.dto.AuthUserCreateDto;
 import uz.pdp.todo.model.dto.AuthUserDto;
 import uz.pdp.todo.model.dto.AuthUserUpdateDto;
+import uz.pdp.todo.model.dto.PageDto;
 import uz.pdp.todo.respository.AuthUserRepository;
 import uz.pdp.todo.validator.AuthUserValidator;
 
 import java.util.List;
 
+@Service
 public class AuthUserService
         extends AbstractService<
         AuthUserRepository,
@@ -28,6 +32,10 @@ public class AuthUserService
 
     @Override
     public AuthUserDto create(AuthUserCreateDto dto) {
+        validator.validateOnCreate(dto);
+
+
+        AuthUser authUser = mapper.fromDto(dto);
         return null;
     }
 
@@ -42,8 +50,8 @@ public class AuthUserService
     }
 
     @Override
-    public List<AuthUserDto> getAll(BaseCriteria criteria) {
-        return List.of();
+    public PageDto<List<AuthUserDto>> getAll(BaseCriteria criteria) {
+        return null;
     }
 
     @Override

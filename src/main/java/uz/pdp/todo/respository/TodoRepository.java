@@ -1,70 +1,53 @@
 package uz.pdp.todo.respository;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import uz.pdp.todo.criteria.TodoCriteria;
 import uz.pdp.todo.model.domain.Todo;
+import uz.pdp.todo.model.dto.TodoDto;
+import uz.pdp.todo.model.dto.TodoProjection;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class TodoRepository {
-    private final JdbcTemplate jdbcTemplate;
+public interface TodoRepository extends JpaRepository<Todo, String> {
 
-    public TodoRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
-    public Todo save(Todo todo) {
-        Optional<Todo> byId = findById(todo.getId());
-        if (byId.isPresent()) {
-            jdbcTemplate.update("""
-                     update todo
-                      set title = ?,description =?,completed = ?, deleted = ?, updated_at = ?
-                      where id = ?
-                    """, todo.getTitle(), todo.getDescription(), todo.isCompleted(), todo.isDeleted(), LocalDateTime.now(), todo.getId());
-        } else {
-            jdbcTemplate.update("""
-                       insert into todo ( id,title, description) 
-                                            values (?, ?, ?)
-                    """, todo.getId(), todo.getTitle(), todo.getDescription());
-        }
+    @Query(value = """
+            from Todo t where not t.deleted order by t.createdAt desc
+            """)
+    List<Todo> findAll();
 
-        return findById(todo.getId()).get();
-    }
 
-    private Optional<Todo> findById(String id) {
-        String sql = """
-                select a.*
-                from todo a
-                where a.id = ?""";
+    List<Todo> findAllByDeletedFalseOrderByCreatedAtDesc();
 
-        try {
-            Todo todo = jdbcTemplate.queryForObject(sql, getRowMapper(), id);
-            return Optional.of(todo);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
+    Optional<Todo> findAllByIdAndDeletedFalse(String id);
 
-    public RowMapper<Todo> getRowMapper() {
-        return (rs, rowNum) -> {
-            Todo author = new Todo();
-            author.setId(rs.getString("id"));
-            author.setDescription(rs.getString("description"));
-            author.setTitle(rs.getString("title"));
-            author.setDeleted(rs.getBoolean("deleted"));
-            author.setCompleted(rs.getBoolean("completed"));
-            return author;
-        };
-    }
+    List<Todo> findAllByCompletedAndCreatedAtBetweenAndDeletedFalseOrderByCreatedAtDesc(Boolean completed, Date start, Date end);
 
-    public List<Todo> findAll() {
-        String sql = """
-                        select * from todo where not deleted order by created_at desc
-                """;
-        return jdbcTemplate.query(sql, getRowMapper());
-    }
+    @Query("""
+            from Todo t where not t.deleted
+                        and (:completed is null or t.completed = :completed)
+                        and (t.title ilike ('%' || :search || '%') or t.description ilike ('%' || :search || '%'))
+            order by t.createdAt desc
+            """)
+    Page<Todo> findAllByCriteria(Boolean completed, String search, Pageable pageable);
+
+    @Query(value = """
+            select new uz.pdp.todo.model.dto.TodoDto(t.id,t.title,t.description,t.completed) 
+                        from Todo t 
+                        where not t.deleted order by t.createdAt desc
+            """)
+    List<TodoDto> findAllDto();
+
+    @Query(value = """
+            select t.id as id, t.title as title, t.description as description, t.completed as completed
+                        from Todo t 
+                        where not t.deleted 
+                                    order by t.createdAt desc
+            """)
+    List<TodoProjection> findAllDtoInterface();
 }

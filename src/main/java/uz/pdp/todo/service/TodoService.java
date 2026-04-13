@@ -1,15 +1,14 @@
 package uz.pdp.todo.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import uz.pdp.todo.criteria.BaseCriteria;
 import uz.pdp.todo.criteria.TodoCriteria;
-import uz.pdp.todo.respository.TodoRepository;
-import uz.pdp.todo.model.dto.TodoCreateDto;
-import uz.pdp.todo.model.dto.TodoDto;
-import uz.pdp.todo.model.dto.TodoUpdateDto;
 import uz.pdp.todo.mapper.TodoMapper;
 import uz.pdp.todo.model.domain.Todo;
+import uz.pdp.todo.model.dto.*;
+import uz.pdp.todo.respository.TodoRepository;
 import uz.pdp.todo.validator.TodoValidator;
 
 import java.util.List;
@@ -31,18 +30,45 @@ public class TodoService
 
     @Override
     public TodoDto update(TodoUpdateDto dto, String id) {
+
         return null;
     }
 
     @Override
     public TodoDto get(String id) {
+
+
         return null;
     }
 
     @Override
-    public List<TodoDto> getAll(TodoCriteria criteria) {
-        List<Todo> todos = repository.findAll();
-        return todos.stream().map(mapper::toDto).toList();
+    public PageDto<List<TodoDto>> getAll(TodoCriteria criteria) {
+
+        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
+        Page<Todo> page = repository.findAllByCriteria(criteria.getIsComplete(), criteria.getSearch(), pageable);
+
+        List<TodoDto> todos = page.getContent().stream()
+                .map(mapper::toDto).toList();
+
+        return new PageDto<>(
+                page.getTotalElements(),
+                page.getTotalPages(),
+                todos
+        );
+    }
+
+    public PageDto<List<TodoDto>> getAllDto() {
+
+        List<TodoDto> todos = repository.findAllDto();
+        return new PageDto<>(
+                0l,
+                0,
+                todos
+        );
+    }
+
+    public List<TodoProjection> getAllDtoInterface() {
+        return repository.findAllDtoInterface();
     }
 
     @Override

@@ -1,4 +1,7 @@
 package uz.pdp.todo.respository;
 
-public interface AuthUserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import uz.pdp.todo.model.domain.AuthUser;
+
+public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
 }
