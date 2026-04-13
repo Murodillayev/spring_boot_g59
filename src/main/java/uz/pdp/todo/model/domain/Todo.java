@@ -1,7 +1,7 @@
 package uz.pdp.todo.model.domain;
 
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +12,10 @@ public class Todo extends BaseEntity {
     private String title;
     private String description;
     private boolean completed;
+
+    @ManyToOne
+//    @JoinColumn(name = "user_id")
+    private AuthUser user;
 }
 
 // interface based

@@ -20,8 +20,7 @@ public class TodoMapper {
     public TodoDto toDto(Todo todo) {
         return TodoDto.builder()
                 .id(todo.getId())
-                .title(todo
-                        .getTitle())
+                .title(todo.getTitle())
                 .completed(todo.isCompleted())
                 .description(todo.getDescription())
                 .build();

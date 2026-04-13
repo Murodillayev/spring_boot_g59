@@ -1,11 +1,11 @@
 package uz.pdp.todo.model.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import uz.pdp.todo.model.enums.AuthRole;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +17,8 @@ public class AuthUser extends BaseEntity {
     private String username;
     private String password;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Todo> todos;
 
     @Enumerated(EnumType.STRING)
     private AuthRole role;
