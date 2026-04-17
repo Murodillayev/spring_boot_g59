@@ -7,11 +7,5 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
-
-
-  security:
-    user:
-      password: asdsadasd23w
-      name: asdsadsad

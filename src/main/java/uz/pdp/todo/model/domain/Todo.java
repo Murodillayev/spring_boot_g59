@@ -13,9 +13,9 @@ public class Todo extends BaseEntity {
     private String description;
     private boolean completed;
 
-    @ManyToOne
-//    @JoinColumn(name = "user_id")
-    private AuthUser user;
+//    @ManyToOne
+////    @JoinColumn(name = "user_id")
+//    private AuthUser user;
 }
 
 // interface based

@@ -1,7 +1,10 @@
 package uz.pdp.todo.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.ObjectMapper;
+import uz.pdp.todo.CustomUserDetailsService;
+import uz.pdp.todo.config.CustomUserDetails;
 import uz.pdp.todo.criteria.TodoCriteria;
 import uz.pdp.todo.model.dto.*;
 import uz.pdp.todo.service.TodoService;
@@ -38,20 +41,23 @@ public class TodoController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) LocalDate fromCreate,
             @RequestParam(required = false) LocalDate toCreate,
-            @RequestParam(required = false) Boolean completed
-    ) {
-//        return service.getAll(
-//                TodoCriteria.builder()
-//                        .fromDate(fromCreate)
-//                        .toDate(toCreate)
-//                        .isComplete(completed)
-//                        .page(page)
-//                        .size(size)
-//                        .search(search)
-//                        .build()
-//        );
+            @RequestParam(required = false) Boolean completed,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+            ) {
+        return service.getAll(
 
-        return service.getAllDto();
+
+                TodoCriteria.builder()
+                        .fromDate(fromCreate)
+                        .toDate(toCreate)
+                        .isComplete(completed)
+                        .page(page)
+                        .size(size)
+                        .search(search)
+                        .build()
+        );
+
+//        return service.getAllDto();
     }
 
     @GetMapping("/{id}")

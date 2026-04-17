@@ -30,11 +30,12 @@ public interface TodoRepository extends JpaRepository<Todo, String> {
 
     @Query("""
             from Todo t where not t.deleted
+                        and t.createdBy = :userId
                         and (:completed is null or t.completed = :completed)
                         and (t.title ilike ('%' || :search || '%') or t.description ilike ('%' || :search || '%'))
             order by t.createdAt desc
             """)
-    Page<Todo> findAllByCriteria(Boolean completed, String search, Pageable pageable);
+    Page<Todo> findAllByCriteria(String userId, Boolean completed, String search, Pageable pageable);
 
     @Query(value = """
             select new uz.pdp.todo.model.dto.TodoDto(t.id,t.title,t.description,t.completed) 

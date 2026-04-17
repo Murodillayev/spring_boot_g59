@@ -17,9 +17,6 @@ public class AuthUser extends BaseEntity {
     private String username;
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Todo> todos;
-
     @Enumerated(EnumType.STRING)
     private AuthRole role;
 

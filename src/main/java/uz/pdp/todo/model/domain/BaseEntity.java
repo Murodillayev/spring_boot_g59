@@ -1,12 +1,11 @@
 package uz.pdp.todo.model.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,7 +13,8 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     @Id
-    private String id;
+//    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id = UUID.randomUUID().toString();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
