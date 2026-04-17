@@ -43,6 +43,11 @@ public class SecurityConfig {
                 .username("user")
                 .password("123")
                 .build();
-        return new InMemoryUserDetailsManager(user);
+
+        UserDetails user2 = User.withDefaultPasswordEncoder()
+                .username("user2")
+                .password("123")
+                .build();
+        return new InMemoryUserDetailsManager(user, user2);
     }
 }
