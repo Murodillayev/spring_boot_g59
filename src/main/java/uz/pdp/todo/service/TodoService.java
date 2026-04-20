@@ -3,18 +3,13 @@ package uz.pdp.todo.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uz.pdp.todo.config.CustomUserDetails;
 import uz.pdp.todo.config.SecurityUtils;
 import uz.pdp.todo.criteria.TodoCriteria;
 import uz.pdp.todo.mapper.TodoMapper;
 import uz.pdp.todo.model.domain.Todo;
 import uz.pdp.todo.model.dto.*;
-import uz.pdp.todo.respository.AuthUserRepository;
 import uz.pdp.todo.respository.TodoRepository;
 import uz.pdp.todo.validator.TodoValidator;
 
@@ -29,6 +24,7 @@ public class TodoService
     public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator) {
         super(repository, mapper, validator);
     }
+
     @Transactional
     public TodoDto create(TodoCreateDto dto) {
         Todo todo = mapper.fromDto(dto);
@@ -56,9 +52,7 @@ public class TodoService
 //        CustomUserDetails sessionUser = (CustomUserDetails) authentication.getPrincipal();
 
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
-
         Page<Todo> page = repository.findAllByCriteria(SecurityUtils.getCurrentUser().getId(), criteria.getIsComplete(), criteria.getSearch(), pageable);
-
         List<TodoDto> todos = page.getContent().stream()
                 .map(mapper::toDto).toList();
 

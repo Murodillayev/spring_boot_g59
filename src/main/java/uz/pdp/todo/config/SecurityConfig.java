@@ -7,24 +7,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import uz.pdp.todo.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomUserDetailsService customUserDetailsService) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable);
+
         http.authorizeHttpRequests(
                 auth -> auth
-//                        .requestMatchers("/todo")
-//                        .permitAll()
                         .anyRequest()
                         .authenticated()
         );
@@ -35,9 +32,7 @@ public class SecurityConfig {
         );
 
         http.httpBasic(Customizer.withDefaults());
-
-        http.csrf(AbstractHttpConfigurer::disable);
-
+        http.userDetailsService(customUserDetailsService);
         return http.build();
     }
 
@@ -46,4 +41,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
+// JWT -> json web token
