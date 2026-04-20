@@ -43,3 +43,8 @@ public class CustomUserDetails implements UserDetails {
         return this.username;
     }
 }
+
+
+// filterda login apidan tashqari barcha yopiq apilarda user Details yasash uchun dbga call qilinyapti. Bu muammoni hali qiling
+// User details yasashni har safar db dan load qilishni yaxshi va yomon tominini organish
+// User details yasashni token orqali yasab contextholderga solishni yaxshi va yomon tominini organish

@@ -3,7 +3,6 @@ package uz.pdp.todo.controller;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.ObjectMapper;
-import uz.pdp.todo.CustomUserDetailsService;
 import uz.pdp.todo.config.CustomUserDetails;
 import uz.pdp.todo.criteria.TodoCriteria;
 import uz.pdp.todo.model.dto.*;
