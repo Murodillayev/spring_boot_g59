@@ -1,6 +1,5 @@
 package uz.pdp.todo.service;
 
-import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.pdp.todo.config.CustomUserDetails;
 import uz.pdp.todo.config.JwtUtils;
+import uz.pdp.todo.config.YmlData;
 import uz.pdp.todo.criteria.BaseCriteria;
 import uz.pdp.todo.mapper.AuthUserMapper;
 import uz.pdp.todo.model.domain.AuthUser;
@@ -36,11 +36,13 @@ public class AuthUserService
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final YmlData ymlData;
 
-    public AuthUserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
+    public AuthUserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, YmlData ymlData) {
         super(repository, mapper, validator);
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
+        this.ymlData = ymlData;
     }
 
     public UserDetails findByUsername(String username) throws UsernameNotFoundException {
@@ -90,14 +92,17 @@ public class AuthUserService
         if (!passwordEncoder.matches(password, authUser.getPassword())) {
             throw new BadCredentialsException("Bad credentials");
         }
+
         //generte token
+        if (ymlData.getUserniDbDanOlibYasasinmi()) {
+            return jwtUtils.generateToken(authUser, Map.of());
+        }
+
         return jwtUtils.generateToken(authUser,
                 Map.of("role", authUser.getRole(),
-                        "user_id", authUser.getId()
-                ));
+                        "user_id", authUser.getId()));
     }
-
-
 }
 
+//
 //
