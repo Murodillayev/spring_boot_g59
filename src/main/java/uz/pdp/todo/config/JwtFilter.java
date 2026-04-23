@@ -5,7 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +39,8 @@ public class JwtFilter extends OncePerRequestFilter {
             String authorizationData = request.getHeader("Authorization"); // Basic base64data | Bearer jwt_token
 
             // validate token
-            String token = jwtUtils.validateToken(authorizationData);
-            UserDetails userDetails = makeUserDetails(token);
+            Claims claims = jwtUtils.validateAccessToken(authorizationData);
+            UserDetails userDetails = makeUserDetails(claims);
 
             // create authentification(user details)
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -54,8 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private UserDetails makeUserDetails(String token) {
-        Claims claims = jwtUtils.exractClaims(token);
+    private UserDetails makeUserDetails(Claims claims) {
 
         String username = claims.getSubject();
         if (ymlData.getUserniDbDanOlibYasasinmi()) {

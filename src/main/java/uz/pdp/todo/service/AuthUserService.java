@@ -1,5 +1,6 @@
 package uz.pdp.todo.service;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,10 +12,7 @@ import uz.pdp.todo.config.YmlData;
 import uz.pdp.todo.criteria.BaseCriteria;
 import uz.pdp.todo.mapper.AuthUserMapper;
 import uz.pdp.todo.model.domain.AuthUser;
-import uz.pdp.todo.model.dto.AuthUserCreateDto;
-import uz.pdp.todo.model.dto.AuthUserDto;
-import uz.pdp.todo.model.dto.AuthUserUpdateDto;
-import uz.pdp.todo.model.dto.PageDto;
+import uz.pdp.todo.model.dto.*;
 import uz.pdp.todo.respository.AuthUserRepository;
 import uz.pdp.todo.validator.AuthUserValidator;
 
@@ -87,20 +85,58 @@ public class AuthUserService
 
     }
 
-    public String login(String username, String password) {
+    public LoginResponse login(String username, String password) {
         AuthUser authUser = repository.findByUsernameAndDeletedFalse(username).orElseThrow(() -> new UsernameNotFoundException(username));
         if (!passwordEncoder.matches(password, authUser.getPassword())) {
             throw new BadCredentialsException("Bad credentials");
         }
 
+        TokenDto accessToken;
         //generte token
         if (ymlData.getUserniDbDanOlibYasasinmi()) {
-            return jwtUtils.generateToken(authUser, Map.of());
+            accessToken = jwtUtils.generateAccessToken(authUser, Map.of(
+                    "type", "access_token"
+            ));
+        } else {
+            accessToken = jwtUtils.generateAccessToken(authUser,
+                    Map.of("role", authUser.getRole(),
+                            "type", "access_token",
+                            "user_id", authUser.getId()));
         }
 
-        return jwtUtils.generateToken(authUser,
-                Map.of("role", authUser.getRole(),
-                        "user_id", authUser.getId()));
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(jwtUtils.generateRefreshToken(authUser))
+                .build();
+
+    }
+
+    public LoginResponse refreshToken(String token) {
+        Claims claims = jwtUtils.exractClaims(token);
+
+        AuthUser authUser = repository.findByUsernameAndDeletedFalse(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException(claims.getSubject()));
+
+        TokenDto accessToken;
+        if (ymlData.getUserniDbDanOlibYasasinmi()) {
+            accessToken = jwtUtils.generateAccessToken(authUser, Map.of(
+                    "type", "access_token"
+            ));
+        } else {
+            accessToken = jwtUtils.generateAccessToken(authUser,
+                    Map.of("role", authUser.getRole(),
+                            "type", "access_token",
+                            "user_id", authUser.getId()));
+        }
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(
+                        TokenDto.builder()
+                                .token(token)
+                                .expiry(claims.getExpiration())
+                                .build()
+                )
+                .build();
     }
 }
 

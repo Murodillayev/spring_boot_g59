@@ -4,6 +4,7 @@ public class Constants {
 
     public static String[] WHITE_LIST = {
             "/auth/login",
-            "/auth/register"
+            "/auth/register",
+            "/auth/refresh-token",
     };
 }
