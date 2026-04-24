@@ -22,7 +22,7 @@ public class TestRestTemplateController {
 
     @GetMapping("/getForEntity")
     public List<Post> testGetForEntity() {
-        return postApiService.getAllByGetForEntity();
+        return postApiService.getAllByGetForEntity().getBody();
     }
 
 
@@ -33,7 +33,7 @@ public class TestRestTemplateController {
 
     @GetMapping("/getForEntity/{id}")
     public Post testGetForEntity(@PathVariable String id) {
-        return postApiService.getByGetForEntity(id);
+        return postApiService.getByGetForEntity(id).getBody();
     }
 
     @PostMapping("/postForObject")
