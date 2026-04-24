@@ -6,5 +6,6 @@ public class Constants {
             "/auth/login",
             "/auth/register",
             "/auth/refresh-token",
+            "/test"
     };
 }

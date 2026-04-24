@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/todo_59
+    url: jdbc:postgresql://localhost:5432/postgres
     username: macbookpro
     password: 19801980
     driver-class-name: org.postgresql.Driver
@@ -10,14 +10,10 @@ spring:
       ddl-auto: create
     show-sql: true
 
-  profiles:
-    active: prod,dev
-
 application:
-  sync-db: true
+  sync-db: false
 
 server:
-  port: 7070
-
+  port: 6060
 
 
