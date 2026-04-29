@@ -1,11 +1,16 @@
 package uz.pdp.todo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import uz.pdp.todo.dto.TodoCreateDto;
+
+import java.rmi.MarshalledObject;
 
 @Controller
 @RequestMapping("/todo")
@@ -22,8 +27,8 @@ public class TodoController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute TodoCreateDto dto) {
+    public String create(@ModelAttribute TodoCreateDto dto, Model model) {
         service.create(dto);
-        return "todo/list";
+        return "redirect:/";
     }
 }

@@ -5,6 +5,8 @@ import uz.pdp.todo.dto.TodoCreateDto;
 import uz.pdp.todo.dto.TodoDto;
 import uz.pdp.todo.mapper.TodoMapper;
 
+import java.util.List;
+
 @Service
 public class TodoService {
 
@@ -17,8 +19,13 @@ public class TodoService {
     }
 
     public TodoDto create(TodoCreateDto dto) {
+        dto.validate();
         Todo todo = mapper.fromDto(dto);
         return mapper.toDto(repository.save(todo));
     }
 
+    public List<TodoDto> getAll() {
+        List<Todo> todos = repository.findAll();
+        return mapper.toDto(todos);
+    }
 }

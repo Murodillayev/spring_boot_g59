@@ -6,7 +6,9 @@ import uz.pdp.todo.dto.TodoCreateDto;
 import uz.pdp.todo.dto.TodoDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class TodoMapper {
@@ -24,5 +26,12 @@ public class TodoMapper {
                 .completed(todo.isCompleted())
                 .description(todo.getDescription())
                 .build();
+    }
+
+    public List<TodoDto> toDto(List<Todo> todos) {
+        return todos
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 }

@@ -1,10 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Todos</title>
+    <title>Mening Vazifalarim (To-do List)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .completed { text-decoration: line-through; color: gray; }
+    </style>
 </head>
-<body>
+<body class="container mt-5">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Vazifalar Ro'yxati</h1>
+    <a th:href="@{/todo/create}" class="btn btn-primary">Yangi vazifa qo'shish</a>
+</div>
+
+<table class="table table-hover border">
+    <thead class="table-light">
+    <tr>
+        <th>Sarlavha</th>
+        <th>Tavsif</th>
+        <th>Holat</th>
+    </tr>
+    </thead>
+    <tbody>
+<!--    <tr th:if="${todos}">-->
+<!--        <td colspan="3" class="text-center">Hozircha vazifalar mavjud emas.</td>-->
+<!--    </tr>-->
+
+    <tr th:each="todo : ${todos}">
+        <td th:text="${todo.title}" th:classappend="${todo.completed} ? 'completed'">Sarlavha</td>
+        <td th:text="${todo.description}">Tavsif bu yerda</td>
+        <td>
+            <span th:if="${todo.completed}" class="badge bg-success">Bajarildi</span>
+            <span th:unless="${todo.completed}" class="badge bg-warning text-dark">Jarayonda</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>
