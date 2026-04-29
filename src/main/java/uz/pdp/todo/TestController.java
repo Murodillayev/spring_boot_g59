@@ -24,8 +24,22 @@ public class TestController {
     }
 
     @PostMapping
-    public UserDto register(@RequestBody RegisterDto dto) {
-        return service.register(dto);
+    public ResponseEntity<?> register(@RequestBody RegisterDto dto, HttpServletRequest request) {
+
+//        try {
+        return ResponseEntity
+                .status(200)
+                .body(service.register(dto));
+
+//        } catch (Exception e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.BAD_REQUEST)
+//                    .body(AppErrorDto.builder()
+//                            .path(request.getRequestURI())
+//                            .message(e.getMessage())
+//                            .developerMessage(Arrays.toString(e.getStackTrace()))
+//                            .build());
+//        }
     }
 
 //    @ExceptionHandler({BadRequestException.class})
