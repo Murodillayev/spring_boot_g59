@@ -19,12 +19,14 @@ public class MessageHandler {
 
         if ("/start".equals(text)) {
             telegramService.sendWelcome(message);
+
         } else if (text != null && text.matches("\\d+")) {
             telegramService.sendConvertResult(text, chatId);
-        } else if ("/settings".equals(text) ){
+
+        } else if ("/settings".equals(text)) {
             telegramService.sendSettings(chatId);
 
-        } else{
+        } else {
             telegramService.deleteMessage(message.getMessageId(), chatId);
         }
 

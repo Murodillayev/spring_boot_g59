@@ -83,10 +83,8 @@ public class TelegramService {
                 return fromSum / rate;
             }
 
-
         }
     }
-
 
     public Member currentMember(String chatId) {
         return createOrGetMember(chatId, null);
@@ -129,7 +127,7 @@ public class TelegramService {
 
     private void refreshSettings(Integer messageId, String chatId) {
 
-        EditMessageText  editMessageText = new EditMessageText();
+        EditMessageText editMessageText = new EditMessageText();
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(messageId);
         editMessageText.setText("Konverterni sozlang👇");
