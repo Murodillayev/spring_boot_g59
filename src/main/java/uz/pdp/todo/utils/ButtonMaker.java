@@ -1,4 +1,4 @@
-package uz.pdp.todo;
+package uz.pdp.todo.utils;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

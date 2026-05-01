@@ -2,7 +2,7 @@ package uz.pdp.todo.handler;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import uz.pdp.todo.TelegramService;
+import uz.pdp.todo.service.TelegramService;
 
 @Component
 public class MessageHandler {

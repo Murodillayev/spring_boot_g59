@@ -1,7 +1,7 @@
 package uz.pdp.todo.handler;
 
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import uz.pdp.todo.TelegramService;
+import uz.pdp.todo.service.TelegramService;
 import uz.pdp.todo.annotations.Handler;
 
 @Handler

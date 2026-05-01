@@ -1,4 +1,4 @@
-package uz.pdp.todo;
+package uz.pdp.todo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
