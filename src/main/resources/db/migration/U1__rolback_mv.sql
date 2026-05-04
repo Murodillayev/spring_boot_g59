@@ -1,1 +1,0 @@
-drop materialized view mv_user_stat;

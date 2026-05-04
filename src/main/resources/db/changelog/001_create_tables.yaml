@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: Muhammadkomil
+      changes:
+        - createTable:
+            tableName: test3
+            columns:
+              - column:
+                  name: id
+                  type: varchar
+              - column:
+                  name: test
+                  type: varchar

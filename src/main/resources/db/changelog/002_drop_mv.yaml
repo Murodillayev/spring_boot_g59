@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002
+      author: Muhammadkomil
+      changes:
+        - dropTable:
+            tableName: test
+        - dropTable:
+            tableName: test2
