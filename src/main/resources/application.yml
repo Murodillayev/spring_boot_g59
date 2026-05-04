@@ -1,17 +1,11 @@
-
-
-
-
-
-
-##########################
-# CUSTOM ENVIRONMENTS
-##########################
-application:
-  remotes:
-    json-place: https://jsonplaceholder.typicode.com/posts
-
-
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/todo_59
+    username: macbookpro
+    password: 19801980
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    locations: classpath:db/migration
 
 
 

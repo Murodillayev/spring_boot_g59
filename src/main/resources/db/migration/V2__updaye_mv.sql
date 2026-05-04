@@ -1,0 +1,1 @@
+alter materialized view mv_user_stat rename to mv_user_stats;
