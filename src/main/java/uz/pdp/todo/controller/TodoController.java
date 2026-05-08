@@ -90,18 +90,17 @@ public class TodoController {
 
     @GetMapping("/{id}")
     public TodoDto get(@PathVariable String id) {
-        return null;
+        return service.get(id);
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable String id) {
-
+        service.delete(id);
         return "Sucessfully deleted!";
     }
 
 
     @PutMapping("/{id}")
-    @ResponseBody
     public TodoDto update(@PathVariable String id, @RequestBody TodoUpdateDto dto) {
         return service.update(dto, id);
     }

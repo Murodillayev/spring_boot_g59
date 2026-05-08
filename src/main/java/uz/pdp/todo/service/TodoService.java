@@ -13,16 +13,20 @@ import uz.pdp.todo.model.dto.*;
 import uz.pdp.todo.respository.TodoRepository;
 import uz.pdp.todo.validator.TodoValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class TodoService
         extends AbstractService<TodoRepository, TodoMapper, TodoValidator>
         implements CRUDService<TodoCreateDto, TodoDto, TodoUpdateDto, String, TodoCriteria> {
 
+    private final CacheService cacheService;
 
-    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator) {
+    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator, CacheService cacheService) {
         super(repository, mapper, validator);
+        this.cacheService = cacheService;
     }
 
     @Transactional
@@ -33,15 +37,23 @@ public class TodoService
 
     @Override
     public TodoDto update(TodoUpdateDto dto, String id) {
-
-        return null;
+        Todo todo = validator.existsAndGet(id);
+        mapper.fromDto(todo, dto);
+        TodoDto uTodo = mapper.toDto(repository.save(todo));
+        cacheService.put(id,uTodo);
+        return uTodo ;
     }
 
     @Override
     public TodoDto get(String id) {
+        TodoDto todoDto = cacheService.get(id);
+        if (todoDto == null) {
+            Todo todo = validator.existsAndGet(id);
+            TodoDto dto = mapper.toDto(todo);
+            cacheService.put(id, dto);
+        }
+        return todoDto;
 
-
-        return null;
     }
 
     @Override
@@ -80,6 +92,11 @@ public class TodoService
 
     @Override
     public void delete(String id) {
+        Todo todo = validator.existsAndGet(id);
+        todo.setDeletedAt(LocalDateTime.now());
+        todo.setDeleted(true);
+        repository.save(todo);
 
+        cacheService.remove(id);
     }
 }

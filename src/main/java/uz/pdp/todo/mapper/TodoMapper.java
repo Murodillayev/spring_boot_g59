@@ -7,6 +7,7 @@ import uz.pdp.todo.config.SecurityUtils;
 import uz.pdp.todo.model.domain.Todo;
 import uz.pdp.todo.model.dto.TodoCreateDto;
 import uz.pdp.todo.model.dto.TodoDto;
+import uz.pdp.todo.model.dto.TodoUpdateDto;
 
 import java.util.UUID;
 
@@ -20,6 +21,12 @@ public class TodoMapper {
         todo.setDescription(dto.getDescription());
         todo.setCreatedBy(SecurityUtils.getCurrentUser().getId());
         return todo;
+    }
+
+    public void fromDto(Todo todo, TodoUpdateDto dto) {
+        todo.setTitle(dto.getTitle());
+        todo.setDescription(dto.getDescription());
+        todo.setUpdatedBy(SecurityUtils.getCurrentUser().getId());
     }
 
     public TodoDto toDto(Todo todo) {

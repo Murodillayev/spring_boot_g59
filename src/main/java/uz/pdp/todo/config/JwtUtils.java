@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Service
 public class JwtUtils {
-    private final Long accessTokenExp = 1000 * 20L; // 3 min
+    private final Long accessTokenExp = 1000 * 60 * 60 * 24L; // 3 min
     private final Long refreshTokenExp = 1000 * 60 * 60 * 24L * 3; // 3 kun
 
     private static final String secret = "bu_secret_key_uzunligi_kamida_32_byte_bolishi_shart";
