@@ -8,8 +8,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
 
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("todos");
-    }
 }

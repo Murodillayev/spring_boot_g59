@@ -1,4 +1,6 @@
 package uz.pdp.todo.model.dto;
 
-public interface BaseDto {
+import java.io.Serializable;
+
+public interface BaseDto extends Serializable {
 }

@@ -10,5 +10,8 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  cache:
+    type: redis
+
 application:
   sync-db: true

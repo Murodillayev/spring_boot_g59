@@ -2,6 +2,9 @@ package uz.pdp.todo.service;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +26,9 @@ import java.util.Locale;
 public class TodoService
         extends AbstractService<TodoRepository, TodoMapper, TodoValidator>
         implements CRUDService<TodoCreateDto, TodoDto, TodoUpdateDto, String, TodoCriteria> {
-    private final Cache cache;
 
-    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator, CacheManager cacheManager) {
+    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator) {
         super(repository, mapper, validator);
-        cache = cacheManager.getCache("todos");
     }
 
     @Transactional
@@ -37,27 +38,24 @@ public class TodoService
     }
 
     @Override
+//    @CachePut(value = "todos", key = "#id")
+    @CacheEvict(value = "todos", allEntries = true)
     public TodoDto update(TodoUpdateDto dto, String id) {
         Todo todo = validator.existsAndGet(id);
         mapper.fromDto(todo, dto);
-        TodoDto uTodo = mapper.toDto(repository.save(todo));
-        cache.put(id, uTodo);
-        return uTodo;
+        return mapper.toDto(repository.save(todo));
     }
 
     @Override
+    @Cacheable(value = "todos", key = "#id")
     public TodoDto get(String id) {
-        TodoDto todoDto = cache.get(id, TodoDto.class);
-        if (todoDto == null) {
-            Todo todo = validator.existsAndGet(id);
-            TodoDto dto = mapper.toDto(todo);
-            cache.put(id, dto);
-        }
-        return todoDto;
-
+        Todo todo = validator.existsAndGet(id);
+        return mapper.toDto(todo);
     }
 
+    // TodoServive: [todo1,todo2]
     @Override
+    @Cacheable(value = "todos", key = "#criteria.toString()")
     public PageDto<List<TodoDto>> getAll(TodoCriteria criteria) {
 
 //        SecurityContext context = SecurityContextHolder.getContext();
@@ -92,12 +90,16 @@ public class TodoService
     }
 
     @Override
+//    @CacheEvict(values = "todos", key = "#id")
+    @CacheEvict(value = "list", allEntries = true)
     public void delete(String id) {
         Todo todo = validator.existsAndGet(id);
         todo.setDeletedAt(LocalDateTime.now());
         todo.setDeleted(true);
         repository.save(todo);
-
-        cache.evict(id);
     }
 }
+
+// todos -> aziz : [todo1]
+
+// aziz
