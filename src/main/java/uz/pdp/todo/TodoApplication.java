@@ -16,7 +16,7 @@ public class TodoApplication {
     }
 
 
-    @Bean
+//    @Bean
     public CommandLineRunner init(PasswordEncoder encoder, AuthUserRepository repository) {
         return args -> {
             AuthUser authUser = new AuthUser();

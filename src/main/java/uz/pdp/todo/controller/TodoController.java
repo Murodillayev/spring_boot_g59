@@ -1,5 +1,10 @@
 package uz.pdp.todo.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.ObjectMapper;
@@ -29,6 +34,30 @@ public class TodoController {
     }
 
     @GetMapping("/projection-test")
+    @Operation(summary = "Bu api projectnni test qilish uchun edi. Bu prodda ishlatilamydi",description = "Bu descriptiion")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Foydalanuvchi muvaffaqiyatli topildi"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Bunday ID li foydalanuvchi mavjud emas"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AppErrorDto.class) // Mana shu yerda DTO ni ulaymiz
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Serverda kutilmagan xatolik yuz berdi"
+            )
+    })
+    @Deprecated
     public List<TodoProjection> getAll() {
         return service.getAllDtoInterface();
     }

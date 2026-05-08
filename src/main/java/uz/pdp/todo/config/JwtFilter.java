@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uz.pdp.todo.model.enums.AuthRole;
 import uz.pdp.todo.service.AuthUserService;
@@ -65,9 +66,11 @@ public class JwtFilter extends OncePerRequestFilter {
         return new CustomUserDetails(userId, username, null, AuthRole.valueOf(roleName));
     }
 
+
     private boolean isPublic(String url) {
-        return Arrays.asList(Constants.WHITE_LIST)
-                .contains(url);
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        return Arrays.stream(Constants.WHITE_LIST)
+                .anyMatch(pattern -> antPathMatcher.match(pattern, url));
     }
 
 
