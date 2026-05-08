@@ -1,5 +1,7 @@
 package uz.pdp.todo.service;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +23,11 @@ import java.util.Locale;
 public class TodoService
         extends AbstractService<TodoRepository, TodoMapper, TodoValidator>
         implements CRUDService<TodoCreateDto, TodoDto, TodoUpdateDto, String, TodoCriteria> {
+    private final Cache cache;
 
-    private final CacheService cacheService;
-
-    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator, CacheService cacheService) {
+    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator, CacheManager cacheManager) {
         super(repository, mapper, validator);
-        this.cacheService = cacheService;
+        cache = cacheManager.getCache("todos");
     }
 
     @Transactional
@@ -40,17 +41,17 @@ public class TodoService
         Todo todo = validator.existsAndGet(id);
         mapper.fromDto(todo, dto);
         TodoDto uTodo = mapper.toDto(repository.save(todo));
-        cacheService.put(id,uTodo);
-        return uTodo ;
+        cache.put(id, uTodo);
+        return uTodo;
     }
 
     @Override
     public TodoDto get(String id) {
-        TodoDto todoDto = cacheService.get(id);
+        TodoDto todoDto = cache.get(id, TodoDto.class);
         if (todoDto == null) {
             Todo todo = validator.existsAndGet(id);
             TodoDto dto = mapper.toDto(todo);
-            cacheService.put(id, dto);
+            cache.put(id, dto);
         }
         return todoDto;
 
@@ -97,6 +98,6 @@ public class TodoService
         todo.setDeleted(true);
         repository.save(todo);
 
-        cacheService.remove(id);
+        cache.evict(id);
     }
 }
