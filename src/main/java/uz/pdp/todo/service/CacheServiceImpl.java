@@ -1,28 +1,29 @@
 package uz.pdp.todo.service;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import uz.pdp.todo.model.dto.PageDto;
-import uz.pdp.todo.model.dto.TodoDto;
+import uz.pdp.todo.Box;
 
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@Profile("!redis")
 public class CacheServiceImpl implements CacheService {
 
-    private final Map<String, PageDto<List<TodoDto>>> TODOS = new ConcurrentHashMap<>();
+    private final Map<String, Box<Long>> CODES = new ConcurrentHashMap<>();
 
     @Override
-    public PageDto<List<TodoDto>> getTodos(String key) {
-        return TODOS.get(key);
+    public void putConfirmCode(String code, Long value) {
+        Box<Long> box = new Box<>(value, LocalDateTime.now().plusSeconds(20));
+        CODES.put(code, box);
     }
 
     @Override
-    public void putTodos(String key, PageDto<List<TodoDto>> page) {
-        TODOS.put(key, page);
+    public Long checkCode(String code) {
+        Box<Long> box = CODES.get(code);
+        if (box == null || box.getExpired().isBefore(LocalDateTime.now())) {
+            return null;
+        }
+        return box.getValue();
     }
 }

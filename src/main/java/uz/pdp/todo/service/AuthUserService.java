@@ -1,144 +1,69 @@
 package uz.pdp.todo.service;
 
-import io.jsonwebtoken.Claims;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
-import uz.pdp.todo.config.CustomUserDetails;
-import uz.pdp.todo.config.JwtUtils;
-import uz.pdp.todo.config.YmlData;
-import uz.pdp.todo.criteria.BaseCriteria;
-import uz.pdp.todo.mapper.AuthUserMapper;
-import uz.pdp.todo.model.domain.AuthUser;
-import uz.pdp.todo.model.dto.*;
-import uz.pdp.todo.respository.AuthUserRepository;
-import uz.pdp.todo.validator.AuthUserValidator;
+import uz.pdp.todo.repository.AuthUserRepository;
+import uz.pdp.todo.model.AuthUser;
+import uz.pdp.todo.model.AuthUserCreate;
+import uz.pdp.todo.model.RegisterDto;
+import uz.pdp.todo.model.UserStatus;
 
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @Service
-public class AuthUserService
-        extends AbstractService<
-        AuthUserRepository,
-        AuthUserMapper,
-        AuthUserValidator>
-        implements CRUDService<
-        AuthUserCreateDto,
-        AuthUserDto,
-        AuthUserUpdateDto,
-        String,
-        BaseCriteria> {
+public class AuthUserService {
+    private final CacheService cache;
+    private final AuthUserRepository authUserRepository;
 
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
-    private final YmlData ymlData;
-
-    public AuthUserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, YmlData ymlData) {
-        super(repository, mapper, validator);
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-        this.ymlData = ymlData;
+    public AuthUserService(CacheService cache, AuthUserRepository authUserRepository) {
+        this.cache = cache;
+        this.authUserRepository = authUserRepository;
     }
 
-    public UserDetails findByUsername(String username) throws UsernameNotFoundException {
+    public RegisterDto register(AuthUserCreate dto) {
+        AuthUser authUser = new AuthUser();
+        authUser.setFullName(dto.getFullName());
+        authUser.setPassword(dto.getPassword());
+        authUser.setStatus(UserStatus.PENDING);
+        authUser.setPhone(dto.getPhone());
+        AuthUser save = authUserRepository.save(authUser);
 
-        // load from db by username
-        AuthUser authUser = repository.findByUsernameAndDeletedFalse(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        // return user details
-        return CustomUserDetails.builder()
-                .id(authUser.getId())
-                .username(authUser.getUsername())
-                .password(authUser.getPassword())
-                .role(authUser.getRole())
+
+        String code = generateCode();
+        cache.putConfirmCode(code, save.getId());
+
+        return RegisterDto.builder()
+                .seconds(20L)
+                .message(dto.getPhone() + " raqamga tasdiqlash kodi yuborildi.")
                 .build();
     }
 
-    @Override
-    public AuthUserDto create(AuthUserCreateDto dto) {
-        validator.validateOnCreate(dto);
 
+    public @Nullable AuthUser confirmCode(String code) {
+        Long userId = cache.checkCode(code);
 
-        AuthUser authUser = mapper.fromDto(dto);
-        return null;
-    }
-
-    @Override
-    public AuthUserDto update(AuthUserUpdateDto dto, String id) {
-        return null;
-    }
-
-    @Override
-    public AuthUserDto get(String id) {
-        return null;
-    }
-
-    @Override
-    public PageDto<List<AuthUserDto>> getAll(BaseCriteria criteria) {
-        return null;
-    }
-
-    @Override
-    public void delete(String id) {
-
-    }
-
-    public LoginResponse login(String username, String password) {
-        AuthUser authUser = repository.findByUsernameAndDeletedFalse(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        if (!passwordEncoder.matches(password, authUser.getPassword())) {
-            throw new BadCredentialsException("Bad credentials");
+        if (userId == null) {
+            throw new RuntimeException("Invalid code");
         }
 
-        TokenDto accessToken;
-        //generte token
-        if (ymlData.getUserniDbDanOlibYasasinmi()) {
-            accessToken = jwtUtils.generateAccessToken(authUser, Map.of(
-                    "type", "access_token"
-            ));
-        } else {
-            accessToken = jwtUtils.generateAccessToken(authUser,
-                    Map.of("role", authUser.getRole(),
-                            "type", "access_token",
-                            "user_id", authUser.getId()));
-        }
+        AuthUser authUser = authUserRepository.findById(userId).orElseThrow();
 
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(jwtUtils.generateRefreshToken(authUser))
-                .build();
-
+        authUser.setStatus(UserStatus.ACTIVE);
+        return authUserRepository.save(authUser);
     }
 
-    public LoginResponse refreshToken(String token) {
-        Claims claims = jwtUtils.exractClaims(token);
 
-        AuthUser authUser = repository.findByUsernameAndDeletedFalse(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException(claims.getSubject()));
+    private String generateCode() {
+        int code = ThreadLocalRandom.current().nextInt(1000, 10000);
+        String codeString = String.valueOf(code);
 
-        TokenDto accessToken;
-        if (ymlData.getUserniDbDanOlibYasasinmi()) {
-            accessToken = jwtUtils.generateAccessToken(authUser, Map.of(
-                    "type", "access_token"
-            ));
-        } else {
-            accessToken = jwtUtils.generateAccessToken(authUser,
-                    Map.of("role", authUser.getRole(),
-                            "type", "access_token",
-                            "user_id", authUser.getId()));
+        if (cache.checkCode(codeString) == null) {
+            return codeString;
         }
-
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(
-                        TokenDto.builder()
-                                .token(token)
-                                .expiry(claims.getExpiration())
-                                .build()
-                )
-                .build();
+        return generateCode();
     }
+
+
 }
-
-//
-//
