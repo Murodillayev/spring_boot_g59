@@ -1,9 +1,7 @@
 package uz.pdp.todo.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import uz.pdp.todo.model.dto.LoginResponse;
 import uz.pdp.todo.service.AuthUserService;
 
@@ -29,5 +27,35 @@ public class AuthController {
             @RequestParam String token
     ) {
         return service.refreshToken(token);
+    }
+
+
+    @PostMapping("/create-api")
+    public ResponseEntity<?> createApi(@RequestBody Object dto){
+
+        // /api/v1/product
+        // Method get
+        // logic sql: select * from product; // insert into // update // delete from
+        return null;
+    }
+
+    @GetMapping("/api/{api-path}")
+    public ResponseEntity<Object> call(){
+        return null;
+    }
+
+    @PostMapping("/api/{api-path}")
+    public ResponseEntity<?> call2(){
+        return null;
+    }
+
+    @PutMapping("/api/{api-path}")
+    public ResponseEntity<?> call3(){
+        return null;
+    }
+
+    @DeleteMapping("/api/{api-path}")
+    public ResponseEntity<?> call4(){
+        return null;
     }
 }

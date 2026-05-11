@@ -5,6 +5,7 @@ spring:
     password: 19801980
     driver-class-name: org.postgresql.Driver
 
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,6 +13,11 @@ spring:
 
   cache:
     type: redis
+    redis:
+      time-to-live: 10s
+
+  profiles:
+    active: redis
 
 application:
   sync-db: true

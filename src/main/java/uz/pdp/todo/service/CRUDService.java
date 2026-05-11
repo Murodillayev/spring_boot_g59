@@ -32,7 +32,7 @@ public interface CRUDService<
 
     D get(K id);
 
-    PageDto<List<D>> getAll(C criteria);
+    PageDto<List<D>> getAll(C criteria) throws InterruptedException;
 
     void delete(K id);
 }

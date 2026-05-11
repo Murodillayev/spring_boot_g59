@@ -71,7 +71,7 @@ public class TodoController {
             @RequestParam(required = false) LocalDate toCreate,
             @RequestParam(required = false) Boolean completed,
             @AuthenticationPrincipal CustomUserDetails currentUser
-            ) {
+            ) throws InterruptedException {
         return service.getAll(
 
 

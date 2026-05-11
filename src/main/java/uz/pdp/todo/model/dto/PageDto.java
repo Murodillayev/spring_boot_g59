@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
-public class PageDto<T> {
+public class PageDto<T> implements Serializable {
     private Long allElements;
     private Integer totalPages;
     private T elements;

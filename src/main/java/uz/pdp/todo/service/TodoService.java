@@ -1,13 +1,13 @@
 package uz.pdp.todo.service;
 
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springdoc.core.service.OperationService;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.pdp.todo.config.SecurityUtils;
@@ -20,15 +20,17 @@ import uz.pdp.todo.validator.TodoValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class TodoService
         extends AbstractService<TodoRepository, TodoMapper, TodoValidator>
         implements CRUDService<TodoCreateDto, TodoDto, TodoUpdateDto, String, TodoCriteria> {
 
-    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator) {
+    private final CacheService cacheService;
+
+    public TodoService(TodoRepository repository, TodoMapper mapper, TodoValidator validator, CacheService cacheService) {
         super(repository, mapper, validator);
+        this.cacheService = cacheService;
     }
 
     @Transactional
@@ -55,23 +57,25 @@ public class TodoService
 
     // TodoServive: [todo1,todo2]
     @Override
-    @Cacheable(value = "todos", key = "#criteria.toString()")
-    public PageDto<List<TodoDto>> getAll(TodoCriteria criteria) {
-
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        Authentication authentication = context.getAuthentication();
-//        CustomUserDetails sessionUser = (CustomUserDetails) authentication.getPrincipal();
-
+//    @Cacheable(value = "todos", key = "#criteria.toString()")
+    public PageDto<List<TodoDto>> getAll(TodoCriteria criteria) throws InterruptedException {
+        PageDto<List<TodoDto>> cashTodos = cacheService.getTodos(criteria.toString());
+        if (cashTodos != null) {
+            return cashTodos;
+        }
+        Thread.sleep(3000);
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
         Page<Todo> page = repository.findAllByCriteria(SecurityUtils.getCurrentUser().getId(), criteria.getIsComplete(), criteria.getSearch(), pageable);
         List<TodoDto> todos = page.getContent().stream()
                 .map(mapper::toDto).toList();
 
-        return new PageDto<>(
+        PageDto<List<TodoDto>> res = new PageDto<>(
                 page.getTotalElements(),
                 page.getTotalPages(),
                 todos
         );
+        cacheService.putTodos(criteria.toString(), res);
+        return res;
 
     }
 
