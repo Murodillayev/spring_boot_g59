@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uz.pdp.todo.model.Todo;
 import uz.pdp.todo.model.dto.TodoCreateDto;
 import uz.pdp.todo.model.dto.TodoDto;
+import uz.pdp.todo.model.dto.TodoUpdateDto;
 
 import java.util.UUID;
 
@@ -13,8 +14,14 @@ public class TodoMapper {
         Todo todo = new Todo();
         todo.setId(UUID.randomUUID().toString());
         todo.setTitle(dto.getTitle());
+        todo.setCompleted(false);
         todo.setDescription(dto.getDescription());
         return todo;
+    }
+
+    public void fromDto(TodoUpdateDto dto, Todo todo) {
+        todo.setTitle(dto.getTitle());
+        todo.setDescription(dto.getDescription());
     }
 
     public TodoDto toDto(Todo todo) {

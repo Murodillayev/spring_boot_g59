@@ -1,25 +1,27 @@
 package uz.pdp.todo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uz.pdp.todo.mapper.TodoMapper;
 import uz.pdp.todo.model.Todo;
-import uz.pdp.todo.repo.TodoRepository;
 import uz.pdp.todo.model.dto.TodoCreateDto;
 import uz.pdp.todo.model.dto.TodoDto;
 import uz.pdp.todo.model.dto.TodoUpdateDto;
-import uz.pdp.todo.mapper.TodoMapper;
+import uz.pdp.todo.repo.TodoRepository;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class TodoService {
 
     private final TodoMapper mapper;
     private final TodoRepository repository;
+
+    public TodoService(TodoMapper mapper, TodoRepository repository) {
+        this.mapper = mapper;
+        this.repository = repository;
+    }
 
 
     public TodoDto create(TodoCreateDto dto) {
@@ -33,6 +35,31 @@ public class TodoService {
     }
 
     public TodoDto update(String id, TodoUpdateDto dto) {
-        return null;
+        Todo todo = repository.findById(id).orElse(null);
+        if (todo == null) {
+            throw new RuntimeException("Todo not found");
+        }
+        mapper.fromDto(dto, todo);
+        return mapper.toDto(repository.save(todo));
+    }
+
+    public void delete(String id) {
+        Todo todo = repository.findById(id).orElse(null);
+        if (todo == null) {
+            return;
+        }
+
+        todo.setDeleted(true);
+        repository.save(todo);
+
+    }
+
+    public void completed(String id) {
+        Todo todo = repository.findById(id).orElse(null);
+        if (todo == null) {
+            throw new RuntimeException("Todo not found");
+        }
+        todo.setCompleted(true);
+        repository.save(todo);
     }
 }

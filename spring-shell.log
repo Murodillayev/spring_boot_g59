@@ -1,0 +1,49 @@
+1779080006997:helpo
+1779080037678:help
+1779080103324:stacktrace
+1779080107120:heko
+1779080109497:stacktrace
+1779080111193:help
+1779080122920:history
+1779080133574:version
+1779080226828:hello
+1779080230303:heko
+1779080233002:hello
+1779080354515:clear
+1779080364769:]hello
+1779080368031:hello
+1779080385948:helo
+1779080388544:help
+1779080403999:hello --name Aziz
+1779080410209:hello Aziz
+1779080424959:hello Aziz Aziz
+1779080467714:hello Aziz
+1779080488874:hello Aziz Nurullayev
+1779080531997:hello --lastName Nurullayev --name Aziz
+1779080551077:hello --l Nurullayev --name Aziz
+1779080596080:hello -l Nurullayev --name Aziz
+1779080857171:help
+1779080860646:create
+1779080882138:create -t Dars qilish -d bla bla
+1779081009580:create -t "Dars qilish" -d "bla bla"
+1779081040382:create -t Dars qilish -d bla bla
+1779081731284:helo
+1779081732860:help
+1779081734558:create -t Dars qilish -d bla bla
+1779081744481:create -t "Dars qilish" -d "bla bla"
+1779081904680:help
+1779081912562:create -t Dars qilish -d bla bla
+1779081959650:create
+1779081966383:create qwasads asddsadas
+1779081992143:create todo desc
+1779082009270:stacktrace
+1779082276182:create asd dsa
+1779082279140:help
+1779082294693:login aziz 123
+1779082302480:login aziz aziz
+1779082306208:login admin 123
+1779082313741:create uxlash uyda
+1779082345562:login admin 123
+1779082353439:create uxlash uyda
+1779082357478:logout
+1779082364791:create uxlash uyda
