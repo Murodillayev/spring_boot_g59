@@ -1,4 +1,4 @@
-package uz.pdp.todo.dto;
+package uz.pdp.todo.model.dto;
 
 
 public class TodoUpdateDto {

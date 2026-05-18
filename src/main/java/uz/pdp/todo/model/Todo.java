@@ -1,4 +1,4 @@
-package uz.pdp.todo;
+package uz.pdp.todo.model;
 
 
 import lombok.Getter;

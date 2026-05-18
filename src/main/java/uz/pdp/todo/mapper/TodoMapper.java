@@ -1,11 +1,10 @@
 package uz.pdp.todo.mapper;
 
 import org.springframework.stereotype.Component;
-import uz.pdp.todo.Todo;
-import uz.pdp.todo.dto.TodoCreateDto;
-import uz.pdp.todo.dto.TodoDto;
+import uz.pdp.todo.model.Todo;
+import uz.pdp.todo.model.dto.TodoCreateDto;
+import uz.pdp.todo.model.dto.TodoDto;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component
@@ -19,10 +18,12 @@ public class TodoMapper {
     }
 
     public TodoDto toDto(Todo todo) {
+        if (todo.getId() == null) {
+            throw new RuntimeException("Id is null");
+        }
         return TodoDto.builder()
                 .id(todo.getId())
-                .title(todo
-                        .getTitle())
+                .title(todo.getTitle())
                 .completed(todo.isCompleted())
                 .description(todo.getDescription())
                 .build();
