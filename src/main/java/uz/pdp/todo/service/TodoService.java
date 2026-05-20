@@ -1,6 +1,5 @@
 package uz.pdp.todo.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.pdp.todo.mapper.TodoMapper;
@@ -62,5 +61,13 @@ public class TodoService {
         }
         todo.setCompleted(true);
 //        repository.save(todo);
+    }
+
+    public TodoDto get(String id) {
+        Todo todo = repository.findById(id).orElse(null);
+        if (todo == null) {
+            throw new RuntimeException("Todo not found");
+        }
+        return mapper.toDto(todo);
     }
 }

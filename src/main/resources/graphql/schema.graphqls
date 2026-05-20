@@ -1,0 +1,26 @@
+type Query{
+    get(id: ID!) : Todo,
+    findAll : [Todo!]!
+}
+
+type Mutation{
+    create(dto: TodoChange) : Todo,
+    update(id: ID!, dto: TodoChange) : Todo,
+    delete(id: ID!): Boolean
+}
+
+type Todo implements IdType {
+    id : ID!,
+    title: String,
+    description: String
+    completed: Boolean
+}
+
+interface IdType{
+    id : ID,
+}
+
+input TodoChange{
+    title: String!,
+    description: String!
+}
