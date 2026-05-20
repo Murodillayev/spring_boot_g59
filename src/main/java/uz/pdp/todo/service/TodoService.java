@@ -29,8 +29,9 @@ public class TodoService {
         return mapper.toDto(repository.save(todo));
     }
 
+
     public List<TodoDto> getAll() {
-        List<Todo> todos = repository.findAll();
+        List<Todo> todos = repository.findAllByDeletedFalse();
         return todos.stream().map(mapper::toDto).toList();
     }
 
@@ -43,23 +44,23 @@ public class TodoService {
         return mapper.toDto(repository.save(todo));
     }
 
+    @Transactional
     public void delete(String id) {
         Todo todo = repository.findById(id).orElse(null);
         if (todo == null) {
             return;
         }
-
         todo.setDeleted(true);
-        repository.save(todo);
 
     }
 
+    @Transactional
     public void completed(String id) {
         Todo todo = repository.findById(id).orElse(null);
         if (todo == null) {
             throw new RuntimeException("Todo not found");
         }
         todo.setCompleted(true);
-        repository.save(todo);
+//        repository.save(todo);
     }
 }

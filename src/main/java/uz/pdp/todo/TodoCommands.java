@@ -6,7 +6,11 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 import org.springframework.shell.standard.ShellOption;
 import uz.pdp.todo.model.dto.TodoCreateDto;
+import uz.pdp.todo.model.dto.TodoDto;
+import uz.pdp.todo.model.dto.TodoUpdateDto;
 import uz.pdp.todo.service.TodoService;
+
+import java.util.List;
 
 @ShellComponent
 public class TodoCommands {
@@ -26,7 +30,7 @@ public class TodoCommands {
         return "Salom " + name + " " + lastName;
     }
 
-    @ShellMethod(value = "Todo yaratish")
+    @ShellMethod(key = "cr", value = "Todo yaratish")
     public String create(
             @ShellOption(value = "-t") String title,
             @ShellOption(value = "-d") String description
@@ -37,6 +41,32 @@ public class TodoCommands {
                 .title(title)
                 .build());
         return "Created " + title + ": " + description;
+    }
+
+    @ShellMethod(key = "del")
+    public String delete(
+            @ShellOption(valueProvider = TodoIdValueProvider.class) String id
+    ) {
+        todoService.delete(id);
+        return "Deleted " + id;
+    }
+
+    @ShellMethod(key = "up")
+    public String update(
+            @ShellOption(value = "-i", valueProvider = TodoIdValueProvider.class) String id,
+            @ShellOption(value = "-t") String title,
+            @ShellOption(value = "-d") String description
+    ) {
+        todoService.update(id, TodoUpdateDto.builder()
+                .description(description)
+                .title(title)
+                .build());
+        return "Updated " + title + ": " + description;
+    }
+
+    @ShellMethod(key = "list")
+    public List<TodoDto> getAll() {
+        return todoService.getAll();
     }
 
     @ShellMethod(value = "Login qilish")
@@ -58,7 +88,7 @@ public class TodoCommands {
     }
 
 
-    @ShellMethodAvailability(value = {"create","update","getAll"})
+    @ShellMethodAvailability(value = {"create", "update", "getAll"})
     public Availability isAuthorized() {
         if (securityContext.isLoggedIn()) {
             return Availability.available();
