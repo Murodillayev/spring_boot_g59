@@ -4,11 +4,3 @@ spring:
     username: macbookpro
     password: 19801980
     driver-class-name: org.postgresql.Driver
-
-
-  graphql:
-    schema:
-      file-extensions: .graphqls,.gqls
-    graphiql:
-      path: /graphiql
-      enabled: true
