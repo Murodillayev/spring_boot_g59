@@ -1,8 +1,10 @@
 package uz.pdp.todo;
 
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.graphql.data.method.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import uz.pdp.todo.model.dto.TodoCreateDto;
 import uz.pdp.todo.model.dto.TodoDto;
 import uz.pdp.todo.model.dto.TodoUpdateDto;
@@ -11,6 +13,7 @@ import uz.pdp.todo.service.TodoService;
 import java.util.List;
 
 @Controller
+
 public class TodoController {
 
     private final TodoService service;
@@ -19,7 +22,8 @@ public class TodoController {
         this.service = service;
     }
 
-    @SchemaMapping(typeName = "Query")
+//    @SchemaMapping(typeName = "Query")
+    @QueryMapping
     public TodoDto get(@Argument String id) {
         return service.get(id);
     }
@@ -29,7 +33,8 @@ public class TodoController {
         return service.getAll();
     }
 
-    @SchemaMapping(typeName = "Mutation")
+//    @SchemaMapping(typeName = "Mutation")
+    @MutationMapping
     public TodoDto create(@Argument TodoCreateDto dto) {
         return service.create(dto);
     }
